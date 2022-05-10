@@ -9,7 +9,9 @@
  * @returns void
  */
 export const getKeysByDescriptor = (object, descriptor) => {
-  return Object.entries(Object.getOwnPropertyDescriptors(object)).filter(([, value]) => value[descriptor]).map(([key]) => key);
+  return Object.entries(Object.getOwnPropertyDescriptors(object))
+    .filter(([, value]) => value[descriptor])
+    .map(([key]) => key);
 };
 
 /**
