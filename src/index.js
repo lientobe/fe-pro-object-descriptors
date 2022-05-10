@@ -6,16 +6,24 @@
  * @param {Object} object
  * @param {'writable' | 'enumerable' | 'configurable'} descriptor
  *
- * @returns string[]
+ * @returns void
  */
-export const getKeysByDescriptor = (object, descriptor) => {};
+export const getKeysByDescriptor = (object, descriptor) => {
+  const newArr = [];
+  Object.entries(Object.getOwnPropertyDescriptors(object)).forEach(item => {
+    if (item[1][descriptor]) {
+      newArr.push(item[0]);
+    }
+  });
+  return newArr;
+};
 
 /**
  * Должен вернуть true если объект был заморожен каким-либо методом заморозки freeze, seal, preventExtensions иначе false
  * @param {Object} object
  * @returns {boolean}
  */
-export const isObjectAnyFrozen = (object) => {};
+export const isObjectAnyFrozen = (object) => !Object.isExtensible(object) || Object.isSealed(object) || Object.isFrozen(object);
 
 /**
  * Принимает объект и строку. Мы должны вернуть НОВЫЙ объект(копию оригинального), в котором
@@ -27,7 +35,22 @@ export const isObjectAnyFrozen = (object) => {};
  *
  * @returns {Object}
  */
-export const assignLockedValues = (object, propertyName) => {};
+export const assignLockedValues = (object, propertyName) => {
+  const newObj = Object.assign({}, object);
+  if(newObj.hasOwnProperty(propertyName)) {
+    Object.defineProperty(newObj, propertyName, {
+      writable: false
+    });
+  }
+  else {
+    Object.defineProperty(newObj, propertyName, {
+      value: null,
+      enumerable: true,
+      configurable: true
+    });
+  }
+  return newObj;
+};
 
 /**
  * Принимает объект и возвращает его копию, только абсолютно замороженную
@@ -35,4 +58,4 @@ export const assignLockedValues = (object, propertyName) => {};
  * @param {Object} object
  * @returns {Object}
  */
-export const freezeAllInObject = (object) => {};
+// export const freezeAllInObject = (object) => Object.freeze(Object.assign({}, object));
